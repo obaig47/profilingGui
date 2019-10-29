@@ -30,20 +30,14 @@ class Widget(QtGui.QWidget):
         self.load_btn.setGeometry(0, 0, 320, 30)
         self.load_btn.clicked.connect(self.fileBrowse)
         self.load_btn.setIcon(QtGui.QIcon('open_xlsx.png'))
-        # self.excel_btn.setIconSize(QtCore.QSize(24, 24))
 
         # Progress bar
         self.progress.setGeometry(55, 70, 250, 20)
 
         # Convert File Button
         self.profile_btn.setGeometry(0, 30, 320, 30)
-        # self.profile_btn.resize(self.profile_btn.sizeHint())
         self.profile_btn.clicked.connect(self.convert)
         self.profile_btn.setIcon(QtGui.QIcon('effort.png'))
-        # self.profile_btn.move(125, 40)
-
-        # Opened files being stored here
-        # self.csv = []
 
         self.show()
 
