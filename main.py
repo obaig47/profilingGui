@@ -1,6 +1,6 @@
 import sys, os
 from PyQt4 import QtGui, QtCore  # QtCore is for event handling
-from PyQt4.QtGui import QFileDialog, QMessageBox
+from PyQt4.QtGui import QFileDialog, QMessageBox, QLabel
 
 
 class Widget(QtGui.QWidget):
@@ -15,6 +15,7 @@ class Widget(QtGui.QWidget):
         self.load_btn = QtGui.QPushButton('Load Data File', self)
         self.profile_btn = QtGui.QPushButton("Create Profile", self)
         self.progress = QtGui.QProgressBar(self)
+        self.l1 = QLabel()
 
         self.initUI()
 
@@ -39,6 +40,10 @@ class Widget(QtGui.QWidget):
         self.profile_btn.clicked.connect(self.convert)
         self.profile_btn.setIcon(QtGui.QIcon('effort.png'))
 
+        # Text Label
+        # self.l1.setText(self.fileName)
+        # self.l1.setAlignment(self.AlignCenter)
+
         self.show()
 
     def center(self):
@@ -48,16 +53,16 @@ class Widget(QtGui.QWidget):
         frameGm.moveCenter(centerPoint)
         self.move(frameGm.topLeft())
 
-    def close_application(self):
-        choice = QtGui.QMessageBox.question(None, 'Exit',
-                                            "Are you sure you want to quit?",
-                                            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-
-        if choice == QtGui.QMessageBox.Yes:
-            print("Selected Yes to quit from QMessageBox")
-            sys.exit()
-        else:
-            pass
+    # def close_application(self):
+    #     choice = QtGui.QMessageBox.question(None, 'Exit',
+    #                                         "Are you sure you want to quit?",
+    #                                         QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+    #
+    #     if choice == QtGui.QMessageBox.Yes:
+    #         print("Selected Yes to quit from QMessageBox")
+    #         sys.exit()
+    #     else:
+    #         pass
 
     def fileBrowse(self):
         # Load File Dialog
@@ -74,6 +79,8 @@ class Widget(QtGui.QWidget):
         # print(self.destinationDir)
 
     def convert(self):
+        self.completed = 0
+
         # Progress Bar Update
         while self.completed < 10:
             self.completed += 0.0001
@@ -81,13 +88,14 @@ class Widget(QtGui.QWidget):
 
         import pandas as pd
 
-        # Extracting file type, calling appropriate read function
-        fileType = self.fileName.split('.')[1]
+        # Extracting file extension, calling appropriate read function
+        fullPath, fileExtension = os.path.splitext(self.fileName)
 
-        if fileType == 'csv':
+        print('fileExtension: ' + fileExtension)
+        if fileExtension == '.csv':
             df = pd.read_csv(self.fileName)
             print(df.head())
-        elif fileType == 'xlsx' or fileType == 'xls':
+        elif fileExtension == '.xlsx' or fileExtension == '.xls':
             df = pd.read_excel(self.fileName)
             print(df.head())
         else:
@@ -101,7 +109,12 @@ class Widget(QtGui.QWidget):
 
         # Getting file stem to use for the new html file being created
         fileStemArray = self.fileName.split('/')
-        fileStem = fileStemArray[len(fileStemArray) - 1].split('.')[0]
+
+        # Isolates the name of the file without the full path
+        fileStemName = fileStemArray[len(fileStemArray) - 1]
+
+        # This line is only used for the sake of pulling out the stemName without the full path
+        stemName, fileExtension = os.path.splitext(fileStemName)
 
         # Creating profile using pandas_profiling
         profile = pp.ProfileReport(df)
@@ -110,8 +123,9 @@ class Widget(QtGui.QWidget):
             self.completed += 0.0001
             self.progress.setValue(self.completed)
 
-        export_file = self.destinationDir + '\\Profile_' + fileStem + '.html'
-        # print(export_file)
+        # print('destinationDir: ' + self.destinationDir)
+        export_file = self.destinationDir + '\\Profile_' + stemName + '.html'
+        print('export_file:' + export_file)
         profile.to_file(output_file=export_file)
 
         while self.completed < 100:

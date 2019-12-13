@@ -8,7 +8,7 @@ The created profile is saved in the chosen directory and will automatically open
 The newly saved file adds the prefix "Profile_" to the original file name.
 
 # Required Libraries
-- PyQt4
+- PyQt4~~~~
 - Pandas
 - matplotlib
 - pandas_profiling
