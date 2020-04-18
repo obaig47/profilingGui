@@ -8,10 +8,20 @@ The created profile is saved in the chosen directory and will automatically open
 The newly saved file adds the prefix "Profile_" to the original file name.
 
 # Required Libraries
-- PyQt4~~~~
+- PyQt4
 - Pandas
 - matplotlib
 - pandas_profiling
+
+# Environment
+
+* conda
+
+  * conda create --name <env> --file conda_requirements.txt
+* pip
+  * python -m venv env
+  * source env/bin/activate
+  * pip install -r requirements.txt
 
 # Citations
 This program makes use of the pandas_profiling library
