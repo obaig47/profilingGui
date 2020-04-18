@@ -57,7 +57,6 @@ pip=19.3.1=py37_0
 pluggy=0.13.0=pypi_0
 py=1.8.0=pypi_0
 pygments=2.4.2=pypi_0
-pyinstaller=3.5=pypi_0
 pylint=2.4.3=pypi_0
 pyparsing=2.4.2=pypi_0
 pyqt4=4.11.4=pypi_0
