@@ -17,7 +17,7 @@ The newly saved file adds the prefix "Profile_" to the original file name.
 
 * conda
 
-  * conda create --name <env> --file conda_requirements.txt
+  * conda create --name env_name --file conda_requirements.txt
 * pip
   * python -m venv env
   * source env/bin/activate
