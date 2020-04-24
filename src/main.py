@@ -12,9 +12,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QDesktopWidget, QMainWindow, QLabel, QGridLayout
 from PyQt5.QtGui import QIcon
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-
+        # Setting Instance Variables
         self.fileName = ""
         self.destinationDir = ""
         self.completed = 0
@@ -22,15 +23,28 @@ class Ui_MainWindow(object):
 
         # Main Window
         MainWindow.setObjectName("Data Profiler")
-        MainWindow.resize(464, 204)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
 
         # Centering Window
-        #qtRectangle = self.frameGeometry()
-        #centerPoint = QDesktopWidget().availableGeometry().center()
-        #qtRectangle.moveCenter(centerPoint)
-        #self.move(qtRectangle.topLeft())
+        HEIGHT = 204
+        WIDTH = 464
+
+        MainWindow.resize(WIDTH, HEIGHT)
+
+        screenWidth = rect.width()
+        screenHeight = rect.height()
+
+        x = int((screenWidth - WIDTH)/2)
+        y = int((screenHeight - HEIGHT)/2)
+
+        MainWindow.move(x,y)
+
+        # Creating widget object
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        # Adding Icon
+        MainWindow.setWindowIcon(QtGui.QIcon('../img/server.png'))
 
         # Vertical Layout
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -46,6 +60,8 @@ class Ui_MainWindow(object):
         self.load_file_button.setObjectName("load_file_button")
         self.verticalLayout.addWidget(self.load_file_button)
         self.load_file_button.clicked.connect(self.fileBrowse)
+        self.load_file_button.setIcon(QtGui.QIcon("../img/open_xlsx.png"))
+
 
         # Minimal Mode Check Box
         self.minimal_mode_box = QtWidgets.QCheckBox(self.verticalLayoutWidget)
@@ -60,6 +76,7 @@ class Ui_MainWindow(object):
         self.generate_profile_button.setObjectName("generate_profile_button")
         self.verticalLayout.addWidget(self.generate_profile_button)
         self.generate_profile_button.clicked.connect(self.convert)
+        self.generate_profile_button.setIcon(QtGui.QIcon("../img/effort.png"))
 
         # Progress Bar
         self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget)
@@ -67,22 +84,18 @@ class Ui_MainWindow(object):
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout.addWidget(self.progressBar)
 
-        # Setting central widget
-        MainWindow.setCentralWidget(self.centralwidget)
-
         # Status Bar
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        # Translating MainWindow and connecting slots
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        #MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         MainWindow.setWindowTitle(_translate("Data Profiler", "Data Profiler"))
-
         self.load_file_button.setText(_translate("MainWindow", "Load File"))
         self.minimal_mode_box.setText(_translate("MainWindow", "Minimal Mode (Use on large files)"))
         self.generate_profile_button.setText(_translate("MainWindow", "Generate Profile"))
@@ -103,8 +116,10 @@ class Ui_MainWindow(object):
     def clickBox(self, state):
         if state == QtCore.Qt.Checked:
             self.minimalMode = True
+            print('Minimal Mode Checked')
         else:
             self.minimalMode = False
+            print('Minimal Mode Unchecked')
 
     def convert(self):
         self.completed = 0
@@ -118,9 +133,6 @@ class Ui_MainWindow(object):
 
         # Extracting file extension, calling appropriate read function
         fullPath, fileExtension = os.path.splitext(self.fileName)
-
-
-
 
         print('fileExtension: ' + fileExtension)
         if fileExtension == '.csv':
@@ -155,7 +167,7 @@ class Ui_MainWindow(object):
             profile = pp.ProfileReport(df,minimal=True)
 
         while self.completed < 90:
-            self.completed += 2
+            self.completed += 1
             self.progressBar.setValue(self.completed)
 
         # print('destinationDir: ' + self.destinationDir)
@@ -164,7 +176,7 @@ class Ui_MainWindow(object):
         profile.to_file(output_file=export_file)
 
         while self.completed < 100:
-            self.completed += 2
+            self.completed += 1
             self.progressBar.setValue(self.completed)
 
         # Open the newly created file
@@ -176,6 +188,16 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys, os
     app = QtWidgets.QApplication(sys.argv)
+
+    # Details on screen to calculate center position
+    screen = app.primaryScreen()
+    print('Screen: %s' % screen.name())
+    size = screen.size()
+    print('Size: %d x %d' % (size.width(), size.height()))
+    rect = screen.availableGeometry()
+    print('Available: %d x %d' % (rect.width(), rect.height()))
+
+
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
